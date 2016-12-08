@@ -119,7 +119,7 @@ public class ClientThread extends Thread {
 					user.roomName = roomName;
 				}
 				lv.room.userList.remove(id);
-
+				lv.room.setVisible(false);
 				//
 				/*
 				 * if(id.equals(this.user.id))
@@ -197,6 +197,7 @@ public class ClientThread extends Thread {
 					// 방장이 들어간거니까 방리스트에 추가.
 					lv.room.gameRoom.userListField.add(id);
 				}
+				lv.room.setVisible(false);
 				break;
 			}
 			case CatchMindProtocol.GAME_START: // 게임시작하기.500
@@ -307,7 +308,7 @@ public class ClientThread extends Thread {
 				}
 				break;
 			}
-			case CatchMindProtocol.EXIT_WATTING_ROM:// 대기방 나가기
+			case CatchMindProtocol.EXIT_WATTING_ROM:// 대기방 나가기 900
 			{
 				// 나가는 메세지,
 				// 나가는 사람
@@ -315,7 +316,7 @@ public class ClientThread extends Thread {
 				lv.room.userList.remove(id);
 				break;
 			}
-			case CatchMindProtocol.EXIT_GAME_ROOM: // 게임방 나가기
+			case CatchMindProtocol.EXIT_GAME_ROOM: // 게임방 나가기 1000
 			{
 				// 한명이 다시 대기실로 들어와진다.
 				String id = st.nextToken();
@@ -325,6 +326,8 @@ public class ClientThread extends Thread {
 				if (!id.equals(this.user.id) && lv.room.gameRoom != null)
 					lv.room.gameRoom.userListField.remove(id);
 				lv.room.userList.add(id);
+				if (this.user.id.equals(id))
+					lv.room.setVisible(true);
 				break;
 			}
 			// 방 지워주는 역할.

@@ -146,6 +146,7 @@ public class LoginView extends JFrame implements ActionListener {
 					}
 				}	
 			}
+			setVisible(false);
 			}catch(IOException ex){
 			JOptionPane.showMessageDialog(null, "아이디와 비밀번호를 확인하세요");
 				

@@ -32,6 +32,20 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	JPanel PaintPanel = null;
 	// JComboBox jComboBox = null;
 	JPanel canvas = null;
+	
+	// ----- Problem ------
+	JPanel problem=new JPanel();
+	JLabel problem_text =new JLabel("    정답 : ");
+	JLabel text_problem=new JLabel();
+	
+	
+	
+	// -------hint --------
+	JPanel hint=new JPanel();
+	JLabel hint_text =new JLabel("    힌트: ");
+	JLabel text_hint=new JLabel();
+	
+	
 	// ----- chatting -----
 	JPanel chatting = new JPanel();
 	JTextArea area = new JTextArea();
@@ -55,7 +69,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	// 왼편 오른편
 	JButton left = null;
 	JButton right = null;
-
+	
 	// 색들
 	JPanel colors = null;
 	JButton white = null;
@@ -137,7 +151,28 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		canvas.setBackground(Color.WHITE);
 		canvas.setLayout(null);
 		this.getContentPane().add(canvas, null);
-
+		
+		problem.setBounds(190,20,130,50);
+		problem.setBorder(new LineBorder(new Color(0,0,0),2));
+		problem.setLayout(new GridLayout(1,2));
+		problem_text.setBounds(100,20,50,50);
+		text_problem.setBounds(120,20,80,50);
+		problem.add(problem_text);
+		problem.add(text_problem);
+		this.getContentPane().add(problem,null);
+		
+		
+		hint.setBounds(730,20,130,50);
+		hint.setBorder(new LineBorder(new Color(0,0,0),2));
+		hint.setLayout(new GridLayout(1,2));
+		hint_text.setBounds(100,20,50,50);
+		text_hint.setBounds(120,20,80,50);
+		hint.add(hint_text);
+		hint.add(text_hint);
+		this.getContentPane().add(hint,null);
+		
+		
+		
 		// 채팅창 넣자
 		chatting.setBounds(190, 640, 670, 500);
 		chatting.setLayout(null);
@@ -283,7 +318,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		colors.add(ersAll);
 
 		stopwatch = new JPanel();
-		stopwatch.setBorder(new LineBorder(new Color(0, 0, 0)));
+		stopwatch.setBorder(new LineBorder(new Color(0, 0, 0),3));
 		stopwatch.setBounds(420, 30, 200, 70);
 		stopwatch.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
