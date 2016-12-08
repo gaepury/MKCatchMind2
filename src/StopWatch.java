@@ -35,7 +35,14 @@ public class StopWatch extends Thread{
 				for(int i=0; i<roomAl.size(); i++){
 					if(roomAl.get(i).roomName.equals(roomName)){
 						// 해당 방의 이름과 똑같은 곳을 찾았으면 즉 해당 방을 찾았으면
-						if(roomAl.get(i).userAl.size() != 8);
+						if(roomAl.get(i).userAl.size() != 6){
+							
+							time=0;
+							for(int j=0; j<roomAl.get(i).userAl.size(); j++){
+								roomAl.get(i).userAl.get(j).gameOn = false;
+							}
+								
+						}
 					}
 				}
 			}

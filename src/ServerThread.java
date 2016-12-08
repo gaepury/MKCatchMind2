@@ -455,6 +455,7 @@ public class ServerThread extends Thread {
 				case CatchMindProtocol.EXIT_WATTING_ROM: {
 					// 아이디 받고
 					String id = st.nextToken();
+					user.gameOn = false;
 					// 얘 나갔다는거 전부한테 알려주자.
 					this.msg = CatchMindProtocol.EXIT_WATTING_ROM+";" + id + ";";
 					// 해당 아이디에 해당하는놈 user 지워주자

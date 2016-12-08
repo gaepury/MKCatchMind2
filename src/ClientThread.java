@@ -119,7 +119,7 @@ public class ClientThread extends Thread {
 					user.roomName = roomName;
 				}
 				lv.room.userList.remove(id);
-				lv.room.setVisible(false);
+//				lv.room.setVisible(false);
 				//
 				/*
 				 * if(id.equals(this.user.id))
@@ -197,7 +197,7 @@ public class ClientThread extends Thread {
 					// 방장이 들어간거니까 방리스트에 추가.
 					lv.room.gameRoom.userListField.add(id);
 				}
-				lv.room.setVisible(false);
+//				lv.room.setVisible(false);
 				break;
 			}
 			case CatchMindProtocol.GAME_START: // 게임시작하기.500
@@ -287,12 +287,12 @@ public class ClientThread extends Thread {
 					} else if (myTurn == 1) {
 						user.block = true;
 					} else if (myTurn == 2) {
-						JOptionPane.showMessageDialog(null, "시간이 모두 경과했습니다. 이제는 그릴 수 없습니다.");
 						user.block = true;
 					}
 					
 					user.gameOn = false;
-					
+					lv.room.gameRoom.canvas.repaint();
+					JOptionPane.showMessageDialog(null, "게임이  종료되었습니다.");
 				}
 
 				break;

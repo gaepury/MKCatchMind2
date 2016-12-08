@@ -59,13 +59,15 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	List userListField = null;
 	List leftUserField = null;
 	List rightUserField = null;
-
+	//item
+	JButton item =new JButton("아이템");
+	
 	// JTextField userListField = new JTextField();
 	// 게임시작/ 나가기 버튼
 	JPanel buttons = null;
 	JButton start = null;
 	JButton exit = null;
-
+	
 	// 왼편 오른편
 	JButton left = null;
 	JButton right = null;
@@ -123,6 +125,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	UserInfo user;
 
 	public GameRoom() {
+	
 	}
 
 	public GameRoom(PrintWriter pw) {
@@ -152,6 +155,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		canvas.setLayout(null);
 		this.getContentPane().add(canvas, null);
 		
+		//문제 
 		problem.setBounds(190,20,130,50);
 		problem.setBorder(new LineBorder(new Color(0,0,0),2));
 		problem.setLayout(new GridLayout(1,2));
@@ -161,7 +165,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		problem.add(text_problem);
 		this.getContentPane().add(problem,null);
 		
-		
+		//힌트
 		hint.setBounds(730,20,130,50);
 		hint.setBorder(new LineBorder(new Color(0,0,0),2));
 		hint.setLayout(new GridLayout(1,2));
@@ -171,7 +175,9 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		hint.add(text_hint);
 		this.getContentPane().add(hint,null);
 		
-		
+		//Item 버튼
+		item.setBounds(90, 540, 100, 100);
+		this.getContentPane().add(item, null);
 		
 		// 채팅창 넣자
 		chatting.setBounds(190, 640, 670, 500);
@@ -235,7 +241,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		tool.setBounds(120, 190, 70, 280);
 		tool.setLayout(new GridLayout(0, 1, 0, 0));
 		this.add(tool);
-
+		
 		line = new JButton(new ImageIcon("line.png"));
 		line.setBackground(Color.WHITE);
 		line.addActionListener(this);
@@ -695,9 +701,8 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		return -1;
 
 	}
-
+	
 	public static void main(String[] args) {
-		GameRoom gr = new GameRoom();
-		gr.init();
+		new GameRoom().init();
 	}
 }
