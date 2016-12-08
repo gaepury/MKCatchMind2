@@ -13,7 +13,7 @@ public class StopWatch extends Thread{
 		this.userAl = userAl;
 		this.roomName = roomName;
 		this.roomAl = roomAl;
-		time = 100;
+		time = 60;
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public class StopWatch extends Thread{
 		while(true)
 		{
 			
-			msg = CatchMindProtocol.GAME_STOPWATCH+"" + ";" + time;
+			
 			
 			// 방에 있는 애들한테 msg를 계속 보내주는데..
 			// 문제는 한명이 나가면 break 해줘야지.. 
@@ -44,6 +44,9 @@ public class StopWatch extends Thread{
 				for(int i=0; i<userAl.size(); i++){
 					if(userAl.get(i).roomName.equals(roomName)){
 						userAl.get(i).gameOn = true;
+						
+						msg = CatchMindProtocol.GAME_STOPWATCH+"" + ";" + time + ";" + userAl.get(i).turn;
+						
 						PrintWriter pw = userAl.get(i).pw;
 						pw.println(msg);
 						pw.flush();
@@ -56,7 +59,9 @@ public class StopWatch extends Thread{
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			if(time==0){
+			
+			if(time==-1){
+				
 				break;
 			}
 		}

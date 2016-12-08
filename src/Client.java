@@ -31,7 +31,7 @@ public class Client extends JFrame{
 		String ID;
 		GameRoom gr = null;
 		try {
-			
+
 			// 네트워크 정보.
 			socket = new Socket("127.0.0.1", 10001);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -41,7 +41,6 @@ public class Client extends JFrame{
 			
 			user = new UserInfo(pw);
 			
-						
 			// 처음 시작하면 로그인/ 회원가입 하는 버튼이 있는 창을 띄워준다.
 			LoginView lv = new LoginView(pw, user);
 			// 이거 리드하는거 쓰레드로 받자. 그 뒤에 정리 해보자.

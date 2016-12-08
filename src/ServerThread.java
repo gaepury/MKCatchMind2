@@ -47,6 +47,7 @@ public class ServerThread extends Thread {
 		String line = null;
 		try {
 			while ((line = br.readLine()) != null) {
+				System.out.println(line);
 				// br로 통해서 해당 클라이언트가 보내는 거 모두 읽음.
 				// 그럼 토크나이져로 나눠보자
 				StringTokenizer st = new StringTokenizer(line, ";");
@@ -300,8 +301,9 @@ public class ServerThread extends Thread {
 					String y1 = st.nextToken();
 					String x2 = st.nextToken();
 					String y2 = st.nextToken();
+					String color = st.nextToken();
 
-					this.msg = CatchMindProtocol.DRAW_PAINT+";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2;
+					this.msg = CatchMindProtocol.DRAW_PAINT+";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2 + ";" +color;
 					// id 가지고 우선 roomName 찾자
 					String tempRoomName = "";
 					for (int i = 0; i < userAl.size(); i++) {
@@ -367,12 +369,67 @@ public class ServerThread extends Thread {
 				case CatchMindProtocol.GAME_START: {
 					// 게임시작 된거니까 해당 방에 있는 유저들한테 게임 시작 했다고 다 보내줘야됨.
 					String id = st.nextToken();
-					String roomName = user.roomName;
+					String roomName = st.nextToken();
+					
+					// 팀1 팀2 나눠주자. 다음 Token에 있는건 팀1의 이름들이다.
+					String left1 = st.nextToken();
+					String left2 = st.nextToken();
+					String left3 = st.nextToken();
+					String right1 = st.nextToken();
+					String right2 = st.nextToken();
+					String right3 = st.nextToken();
+					for(int i=0; i<userAl.size();i++){
+						if(userAl.get(i).id.equals(left1)){
+							userAl.get(i).team = 0;
+							userAl.get(i).turn = 0;
+						}else if(userAl.get(i).id.equals(left2)){
+							userAl.get(i).team = 0;
+							userAl.get(i).turn = 1;
+						}
+						else if(userAl.get(i).id.equals(left3)){
+							userAl.get(i).team = 0;
+							userAl.get(i).turn = 2;
+						}
+					}
+					
+					for(int i=0; i<userAl.size();i++){
+						if(userAl.get(i).id.equals(right1)){
+							userAl.get(i).team = 1;
+							userAl.get(i).turn = 0;
+						}else if(userAl.get(i).id.equals(right2)){
+							userAl.get(i).team = 1;
+							userAl.get(i).turn = 1;
+//						}
+						}else if(userAl.get(i).id.equals(right3)){
+							userAl.get(i).team = 1;
+							userAl.get(i).turn = 2;
+						}
+					}
+					for(int i=0; i<roomAl.size();i++){
+						if(roomAl.get(i).roomName.equals(roomName)){
+							for(int j=0; j<roomAl.get(i).userAl.size(); j++){
+								System.out.println("id : " + roomAl.get(i).userAl.get(j).id +", "+ "turn : "+roomAl.get(i).userAl.get(j).turn);
+							}
+						}
+					}
+					
+					String left = ";" + left1 + ";" + left2 + ";" + left3 ;
+					String right = ";" + right1 + ";" + right2 + ";" + right3;
+					
 					// 해당 방에 있는 유저들의 gameOn을 다 true로 바꿔주고
 					// 해당 방에 있는 유저들한테만 게임 시작됬다고 메세지를 보낸다. 그럼 이제 그림판 그릴 수 있게
 					// 해줘야함.
-
-					this.msg = CatchMindProtocol.GAME_START+";" + id + ";" + roomName + ";";
+					Question question = new Question();
+					String answer = question.setQuestion();
+					// 유저가 속해있는 방에 answer 바꿔주자.
+					for(int i=0; i<roomAl.size(); i++){
+						if(roomAl.get(i).roomName.equals(roomName)){
+							roomAl.get(i).answer = answer;
+							System.out.println("해당방의 answer" + roomAl.get(i).answer);
+						}
+					}
+					
+					this.msg = CatchMindProtocol.GAME_START+";" + id + ";" + roomName + ";" + answer + left + right;;
 					System.out.println(msg);
 					synchronized (userAl) {
 						for (int i = 0; i < userAl.size(); i++) {
@@ -508,6 +565,37 @@ public class ServerThread extends Thread {
 						delete = false;
 					}
 
+					break;
+				}
+				case 1500:
+				{String id = st.nextToken();
+				String side = st.nextToken();
+				
+				// 그리고 이 유저의 팀을 정해준다.
+				// 왼쪽이면 0, 오른쪽이면 1
+				for(int i=0; i<userAl.size(); i++){
+					if(userAl.get(i).id.equals(id)){
+						if(side.equals("left")){
+							userAl.get(i).team = 0;
+						}
+						if(side.equals("right")){
+							userAl.get(i).team = 1;
+						}
+					}
+				}
+				
+				this.msg = "1500" + ";" + id + ";" + side;
+				
+				// 그 방에있는 애들한테만 다 보내준다.
+				synchronized(userAl){
+					for(int i=0; i<userAl.size(); i++){
+						if(userAl.get(i).roomName.equals(roomName)){
+							PrintWriter pw = userAl.get(i).pw;
+							pw.println(this.msg);
+							pw.flush();
+						}
+					}
+				}
 					break;
 				}
 				}

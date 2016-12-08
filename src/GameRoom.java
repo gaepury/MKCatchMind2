@@ -39,16 +39,22 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	JTextField text = new JTextField();
 
 	// StopWatch
-//	JTextArea watch = new JTextArea();
+	// JTextArea watch = new JTextArea();
 
 	// userlist
 	List userListField = null;
+	List leftUserField = null;
+	List rightUserField = null;
 
 	// JTextField userListField = new JTextField();
 	// 게임시작/ 나가기 버튼
 	JPanel buttons = null;
 	JButton start = null;
 	JButton exit = null;
+
+	// 왼편 오른편
+	JButton left = null;
+	JButton right = null;
 
 	// 색들
 	JPanel colors = null;
@@ -96,8 +102,6 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	JLabel mm, ss, colon1;
 	Font f1;
 
-	
-	
 	// id
 	String id = "";
 
@@ -129,45 +133,64 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		this.setBounds(100, 100, 1000, 1000);
 		canvas = new JPanel();
 		canvas.setBorder(new LineBorder(new Color(0, 0, 0)));
-		canvas.setBounds(190, 12, 674, 541);
+		canvas.setBounds(190, 100, 670, 540);
 		canvas.setBackground(Color.WHITE);
 		canvas.setLayout(null);
 		this.getContentPane().add(canvas, null);
 
 		// 채팅창 넣자
-		chatting.setBounds(100, 600, 600, 500);
+		chatting.setBounds(190, 640, 670, 500);
 		chatting.setLayout(null);
-		area.setBounds(0, 0, 500, 100);
-		text.setBounds(0, 160, 500, 20);
+		area.setBounds(0, 0, 570, 160);
+		text.setBounds(0, 160, 570, 20);
 		area.setEditable(false);
 		jsP.setAutoscrolls(true);
-		jsP.setBounds(0, 0, 500, 160);
+		jsP.setBounds(0, 0, 570, 160);
 		this.getContentPane().add(chatting, null);
 		chatting.add(area, null);
 		chatting.add(text, null);
 		chatting.add(jsP, null);
 
-//		// StopWatch 넣자.
-//		watch.setBounds(0, 350, 100, 200);
-//		this.getContentPane().add(watch, null);
+		// // StopWatch 넣자.
+		// watch.setBounds(0, 350, 100, 200);
+		// this.getContentPane().add(watch, null);
 
 		// 유저 리스트
 		userListField = new List();
-		userListField.setBounds(0, 0, 100, 100);
+		userListField.setBounds(90, 640, 100, 180);
 		this.getContentPane().add(userListField, null);
+
+		// 왼쪽 유저 리스트
+		leftUserField = new List();
+		leftUserField.setBounds(0, 200, 100, 200);
+		this.getContentPane().add(leftUserField, null);
+
+		// 오른쪽 유저 리스트
+		rightUserField = new List();
+		rightUserField.setBounds(880, 200, 100, 200);
+		this.getContentPane().add(rightUserField, null);
 
 		// 버튼들 넣자
 		buttons = new JPanel();
 		exit = new JButton("나가기");
 		start = new JButton("게임시작");
 
-		buttons.setBounds(650, 600, 300, 300);
-		buttons.setLayout(null);
-		exit.setBounds(150, 0, 150, 150);
-		start.setBounds(0, 0, 150, 150);
+		// 왼편 오른편 버튼 넣자.
+		left = new JButton("팀1");
+		right = new JButton("팀2");
+		this.getContentPane().add(left, null);
+		this.getContentPane().add(right, null);
+
+		left.setBounds(0, 100, 100, 100);
+		right.setBounds(880, 100, 100, 100);
+
+		buttons.setBounds(760, 640, 100, 180);
+		buttons.setLayout(new GridLayout(2,1));
+		exit.setBounds(0, 0, 100, 25);
+		start.setBounds(50, 0, 100, 25);
 		this.getContentPane().add(buttons, null);
-		buttons.add(exit);
 		buttons.add(start);
+		buttons.add(exit);
 
 		jsP.getViewport().add(area, null);
 
@@ -261,30 +284,30 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 
 		stopwatch = new JPanel();
 		stopwatch.setBorder(new LineBorder(new Color(0, 0, 0)));
-		stopwatch.setBounds(0, 150, 100, 50);
-		stopwatch.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 0));
+		stopwatch.setBounds(420, 30, 200, 70);
+		stopwatch.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
 		colors.setLayout(new GridLayout(1, 0, 0, 0));
-		f1=new Font("바탕",Font.BOLD,25);
-		mm=new JLabel("00");
-		colon1=new JLabel(" : ");
-		ss=new JLabel("00");
+		f1 = new Font("바탕", Font.BOLD, 40);
+		mm = new JLabel("00");
+		colon1 = new JLabel(" : ");
+		ss = new JLabel("00");
 		mm.setFont(f1);
 		ss.setFont(f1);
-		
+
 		stopwatch.add(mm);
 		stopwatch.add(colon1);
 		stopwatch.add(ss);
 		this.getContentPane().add(stopwatch, null);
 
 		// 선크기
-		thickness = new JTextField("1");
-		thickness.setBounds(0, 0, 150, 20);
-		this.getContentPane().add(thickness);
+//		thickness = new JTextField("1");
+//		thickness.setBounds(0, 0, 150, 20);
+//		this.getContentPane().add(thickness);
 
 		// 액션리스너 설정
 		text.addActionListener(this);
-		thickness.addActionListener(null);
+//		thickness.addActionListener(null);
 		// shape = new JComboBox();
 		// shape.addItemListener(new java.awt.event.ItemListener() {
 		// public void itemStateChanged(java.awt.event.ItemEvent e) {
@@ -307,7 +330,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 
 			public void windowClosing(WindowEvent e) {
 
-				String msg = CatchMindProtocol.EXIT_GAME_ROOM+";" + id + ";";
+				String msg = CatchMindProtocol.EXIT_GAME_ROOM + ";" + id + ";";
 				try {
 					pw.println(msg);
 					pw.flush();
@@ -330,6 +353,8 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 
 		start.addActionListener(this);
 		exit.addActionListener(this);
+		left.addActionListener(this);
+		right.addActionListener(this);
 	}
 
 	@Override
@@ -364,8 +389,8 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		// 10f,f,0f);
 
 		// 게임 시작 했을 때만 할 수 있음
-		if (user.gameOn == true) {
-			if ((e.getX() > 200 && e.getX() < 870) && (e.getY() > 43 && e.getY() < 505)) {
+		if (user.gameOn == true && !user.block) {
+			if ((e.getX() > 200 && e.getX() < 870) && (e.getY() > 43+88 && e.getY() < 505+88)) {
 
 				gg.setStroke(bs);
 
@@ -388,67 +413,51 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		if ((e.getX() > 200 && e.getX() < 870) && (e.getY() > 43 && e.getY() < 505)) {
-			w = x2 - x1;
-			h = y2 - y1;
-			gg.setPaintMode();
-			switch (type) {
-			case 0:
-				g.drawLine(x1, y1, x2, y2);
-				break;
-			case 1:
-				g.drawOval(x1, y1, w, h);
-				break;
-			case 2:
-				g.drawRect(x1, y1, w, h);
-				break;
-			}
-		}
-
-		// 이제 서버로 정보들 보내줘야지..! 보니까 x1, y1, x2, y2 보내면 될거같다..!
-		try {
-			System.out.println(x1 + " " + y1 + " " + x2 + " " + y2);
-			String msg = CatchMindProtocol.DRAW_PAINT+";" + id + ";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2 + ";";
-			pw.println(msg);
-			pw.flush();
-		} catch (Exception e2) {
-			// TODO: handle exception
-		}
-	}
+	      // TODO Auto-generated method stub
+	      
+	      gg.setPaintMode();
+	      if(((x1 > 200 && x1 < 870) && (y1 > 43+88 && y1 < 505+88))&&((x2 > 200 && x2 < 870) && (y2 > 43+88 && y2 < 505+88))){
+	         w = x2-x1;
+	         h = y2-y1;
+	         switch(type){
+	         case 0 : g.drawLine(x1, y1, x2, y2);break;
+	         case 1 : g.drawOval(x1, y1, w, h);break;
+	         case 2 : g.drawRect(x1, y1, w, h);break;
+	         }   
+	      }else{
+	         return;
+	      }
+	      // 이제 서버로 정보들 보내줘야지..! 보니까 x1, y1, x2, y2 보내면 될거같다..! 
+	      try {
+	         System.out.println(x1 + " " + y1 + " " + x2 + " " + y2);
+	         int color_info = getColorInfo();
+	         String msg = "300;"+ id + ";" + type + ";" +x1+";"+y1+";"+x2+";"+y2+";" + color_info +";";
+	         pw.println(msg);
+	         pw.flush();
+	      } catch (Exception e2) {
+	         // TODO: handle exception
+	      }
+	   }
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		if ((e.getX() > 200 && e.getX() < 870) && (e.getY() > 43 && e.getY() < 505)) { // ###
-			ox = x2;
-			oy = y2;
+		ox = x2;
+		oy = y2;
 
-			x2 = e.getX();
-			y2 = e.getY();
-
-			if ((e.getX() > 200 && e.getX() < 870) && (e.getY() > 43 && e.getY() < 505)) {// ###
-				switch (type) {
-				case 0:
-					line();
-					break;
-				case 1:
-					oval();
-					break;
-				case 2:
-					rect();
-					break;
-				case 3:
-					pen();
-					break;
-				}
-			}
-		} else { // ###
-			x1 = null;
-			y1 = null;
-			x2 = null;
-			y2 = null;
-		}
+		x2 = e.getX();
+		y2 = e.getY();
+		
+		if(((x1 > 200 && x1 < 870) && (y1 > 43+88 && y1 < 505+88))&&((x2 > 200 && x2 < 870) && (y2 > 43+88 && y2 < 505+88))){
+	         switch(type){
+	         case 0 : line(); break;
+	         case 1 : oval(); break;
+	         case 2 : rect(); break;
+	         case 3 : pen(); break;
+	         }   
+	      }else{
+	         return;
+	      }
 	}
 
 	public void line() {
@@ -477,7 +486,9 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		g.drawLine(x1, y1, x2, y2);
 		try {
 			System.out.println(x1 + " " + y1 + " " + x2 + " " + y2);
-			String msg = CatchMindProtocol.DRAW_PAINT+";" + id + ";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2 + ";";
+			int color_info = getColorInfo();
+			String msg = CatchMindProtocol.DRAW_PAINT + ";" + id + ";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";"
+					+ y2 + ";" + color_info + ";";
 			pw.println(msg);
 			pw.flush();
 		} catch (Exception e) {
@@ -500,7 +511,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		// TODO Auto-generated method stub
 		Object ob = e.getSource();
 		if (ob == text) {
-			String msg = CatchMindProtocol.GAME_ROOM_CHAT+";" + id + ";" + text.getText();
+			String msg = CatchMindProtocol.GAME_ROOM_CHAT + ";" + id + ";" + text.getText();
 			text.setText("");
 			try {
 				pw.println(msg);
@@ -522,7 +533,17 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 
 					user.gameOn = true;
 
-					String msg = CatchMindProtocol.GAME_START+";" + id + ";" + user.roomName + ";";
+					String leftId = "";
+					String rightId = "";
+					// 맨 마지막에 세미콜론 없음 앞에는 ;있음 즉 ;문기;영현;와우 이런식
+					for (int i = 0; i < leftUserField.getItemCount(); i++) {
+						leftId = leftId + ";" + leftUserField.getItem(i);
+					}
+					for (int i = 0; i < rightUserField.getItemCount(); i++) {
+						rightId = rightId + ";" + rightUserField.getItem(i);
+					}
+
+					String msg = CatchMindProtocol.GAME_START + ";" + id + ";" + user.roomName + leftId + rightId;
 					try {
 						pw.println(msg);
 						pw.flush();
@@ -533,8 +554,30 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 			} else { // 방장이 아니면
 				JOptionPane.showMessageDialog(null, "방장이 아닙니다.");
 			}
+		} else if (ob == left) {
+
+			String msg = "1500" + ";" + id + ";" + "left";
+			try {
+				pw.println(msg);
+				pw.flush();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		} else if (ob == right) {
+
+			String msg = "1500" + ";" + id + ";" + "right";
+
+			try {
+				pw.println(msg);
+				pw.flush();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+
 		} else if (ob == exit) {
-			String msg = CatchMindProtocol.EXIT_GAME_ROOM+";" + id + ";";
+			String msg = CatchMindProtocol.EXIT_GAME_ROOM + ";" + id + ";";
+			JOptionPane.showConfirmDialog(null, "방을 나가시겠습니까?", "방 나가기", JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE);
 			try {
 				pw.println(msg);
 				pw.flush();
@@ -574,9 +617,13 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 			tmp = type;
 			bs = new BasicStroke(10f);
 			type = 3;
-			g.setColor(new Color(255, 255, 255));
+			g.setColor(Color.white);
 		} else if (ob == ersAll) {
 			canvas.repaint();
+			String msg = CatchMindProtocol.DRAW_PAINT + ";" + id + ";" + 4 + ";" + 0 + ";" + 0 + ";" + 0 + ";" + 0 + ";"
+					+ 8 + ";";
+			pw.println(msg);
+			pw.flush();
 		} else if (ob == line) {
 			type = 0;
 			tmp = 0;
@@ -592,4 +639,30 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		}
 	}
 
+	int getColorInfo() {
+		if (g.getColor() == Color.white) {
+			return 0;
+		} else if (g.getColor() == Color.red) {
+			return 1;
+		} else if (g.getColor() == Color.orange) {
+			return 2;
+		} else if (g.getColor() == Color.yellow) {
+			return 3;
+		} else if (g.getColor() == Color.green) {
+			return 4;
+		} else if (g.getColor() == Color.blue) {
+			return 5;
+		} else if (g.getColor() == Color.black) {
+			return 6;
+		} else if (g.getColor() == Color.white) {
+			return 7;
+		}
+		return -1;
+
+	}
+
+	public static void main(String[] args) {
+		GameRoom gr = new GameRoom();
+		gr.init();
+	}
 }
