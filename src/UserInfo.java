@@ -11,6 +11,7 @@ public class UserInfo {
 	public int turn;	// 자기 차례인지 아닌지
 	public boolean gameOn;	// 게임중인지 아닌지
 	public boolean block;
+	public StopWatch sw;
 	
 	public UserInfo() {
 		// TODO Auto-generated constructor stub
@@ -21,6 +22,7 @@ public class UserInfo {
 		host = false;
 		turn = -1;
 		block = false;
+		sw = null;
 	}
 	
 	public UserInfo(PrintWriter pw) {
@@ -32,6 +34,7 @@ public class UserInfo {
 		host = false;
 		turn = -1;
 		block = false;
+		sw = null;
 	}
 	
 }

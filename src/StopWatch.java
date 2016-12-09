@@ -25,15 +25,14 @@ public class StopWatch extends Thread{
 		
 		while(true)
 		{
-			
-			
-			
 			// 방에 있는 애들한테 msg를 계속 보내주는데..
 			// 문제는 한명이 나가면 break 해줘야지.. 
-			
+			String answer=null;
 			synchronized(roomAl){
 				for(int i=0; i<roomAl.size(); i++){
 					if(roomAl.get(i).roomName.equals(roomName)){
+						
+						answer=roomAl.get(i).answer;
 						// 해당 방의 이름과 똑같은 곳을 찾았으면 즉 해당 방을 찾았으면
 						if(roomAl.get(i).userAl.size() != 6){
 							
@@ -52,8 +51,8 @@ public class StopWatch extends Thread{
 					if(userAl.get(i).roomName.equals(roomName)){
 						userAl.get(i).gameOn = true;
 						
-						msg = CatchMindProtocol.GAME_STOPWATCH+"" + ";" + time + ";" + userAl.get(i).turn;
-						
+						msg = CatchMindProtocol.GAME_STOPWATCH+"" + ";" + time + ";" + userAl.get(i).turn+";"+answer;
+						System.out.println(msg);
 						PrintWriter pw = userAl.get(i).pw;
 						pw.println(msg);
 						pw.flush();

@@ -60,7 +60,8 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 	List leftUserField = null;
 	List rightUserField = null;
 	//item
-	JButton item =new JButton("아이템");
+	JButton item1 =new JButton("아이템1");
+	JButton item2 =new JButton("아이템2");
 	
 	// JTextField userListField = new JTextField();
 	// 게임시작/ 나가기 버튼
@@ -176,9 +177,12 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 		this.getContentPane().add(hint,null);
 		
 		//Item 버튼
-		item.setBounds(90, 540, 100, 100);
-		this.getContentPane().add(item, null);
-		
+		item1.setBounds(110, 560, 80, 80);
+		item1.addActionListener(this);
+		item2.setBounds(110, 490, 80, 80);
+		item2.addActionListener(this);
+		this.getContentPane().add(item2, null);
+		this.getContentPane().add(item1, null);
 		// 채팅창 넣자
 		chatting.setBounds(190, 640, 670, 500);
 		chatting.setLayout(null);
@@ -595,9 +599,18 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 			} else { // 방장이 아니면
 				JOptionPane.showMessageDialog(null, "방장이 아닙니다.");
 			}
+		} else if(ob==item1){
+			String msg=CatchMindProtocol.ITEM_1 +";"+user.roomName+";";
+			try {
+				pw.println(msg);
+				pw.flush();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+			
 		} else if (ob == left) {
 
-			String msg = "1500" + ";" + id + ";" + "left";
+			String msg = CatchMindProtocol.DICISION_TEAM + ";" + id + ";" + "left";
 			try {
 				pw.println(msg);
 				pw.flush();
@@ -606,7 +619,7 @@ public class GameRoom extends JFrame implements MouseMotionListener, MouseListen
 			}
 		} else if (ob == right) {
 
-			String msg = "1500" + ";" + id + ";" + "right";
+			String msg = CatchMindProtocol.DICISION_TEAM + ";" + id + ";" + "right";
 
 			try {
 				pw.println(msg);

@@ -22,9 +22,9 @@ public class ServerThread extends Thread {
 	// String id = null;
 	UserInfo user = null;
 	String roomName;
-	
+
 	// 타이머 관련
-		StopWatch sw = null;
+	StopWatch sw = null;
 
 	public ServerThread(Socket socket, ArrayList<UserInfo> userAl, ArrayList<RoomInfo> roomAl) {
 		// TODO Auto-generated constructor stub
@@ -56,7 +56,7 @@ public class ServerThread extends Thread {
 				case CatchMindProtocol.WAITING_ROOM_CHAT: {
 					// 클라이언트로 보낼 메세지 만들자.
 					// 0; + id + 메세지 내용
-					this.msg = CatchMindProtocol.WAITING_ROOM_CHAT+";" + st.nextToken() + ";" + st.nextToken();
+					this.msg = CatchMindProtocol.WAITING_ROOM_CHAT + ";" + st.nextToken() + ";" + st.nextToken();
 
 					synchronized (userAl) {
 						// pw 들 다 가져오고
@@ -70,45 +70,59 @@ public class ServerThread extends Thread {
 				}
 				// 앞에 10이 붙어서 오면 GameRoom 의 채팅이란 소리임.
 				case CatchMindProtocol.GAME_ROOM_CHAT: {
-// 들어온 유저가 게임 중이면! 체크해준다.
-					
+					// 들어온 유저가 게임 중이면! 체크해준다.
+
 					// 클라이언트로 보낼 메세지 만들자
 					String id = st.nextToken();
 					String sendMsg = st.nextToken();
 					int flag = 0;
-					
+
 					System.out.println("Send Msg : " + sendMsg);
-					if(user.gameOn == true)
-					{
+					if (user.gameOn == true) {
 						System.out.println("처음 그냥 메세지보내면 나옴?");
 						// 뭘 체크해줘? 방금 들어온 메세지를 !
 						// 해당 유저가 속해 있는 방을 찾자.
-						for(int i=0; i<roomAl.size(); i++){
-							if(roomAl.get(i).roomName.equals(user.roomName)){
-								System.out.println("RoomNAme : "+roomAl.get(i).roomName);
-								System.out.println("Room의 ANswer : " + roomAl.get(i).answer);
-								if(roomAl.get(i).answer.equals(sendMsg)){
-									System.out.println("@#!#!@#!@#!@#!#");
-									flag = 1;
-									//sw.time = 0;
-									
+						synchronized (roomAl) {
+							for (int i = 0; i < roomAl.size(); i++) {
+								if (roomAl.get(i).roomName.equals(user.roomName)) {
+									System.out.println("RoomNAme : " + roomAl.get(i).roomName);
+									System.out.println("Room의 ANswer : " + roomAl.get(i).answer);
+									if (roomAl.get(i).answer.equals(sendMsg)) {
+										System.out.println("@#!#!@#!@#!@#!#");
+										flag = 1;
+										// ㅁㄴㅇㅁㄴㅇ;
+										// 호스트 찾자.
+										for (int k = 0; k < roomAl.get(i).userAl.size(); k++) {
+											if (roomAl.get(i).userAl.get(k).host == true) {
+												System.out.println(roomAl.get(i).userAl.get(k).id + "@@ 방장 맞나요?");
+												roomAl.get(i).userAl.get(k).sw.time = 0;
+											}
+										}
+										for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
+											roomAl.get(i).userAl.get(j).gameOn = false;
+										}
+										//
+										// sw.time = 0;
+
+									}
 								}
 							}
 						}
-						for(int i=0; i<userAl.size(); i++){
-							if(userAl.get(i).roomName.equals(user.roomName)){
+
+						for (int i = 0; i < userAl.size(); i++) {
+							if (userAl.get(i).roomName.equals(user.roomName)) {
 								user.gameOn = false;
 							}
 						}
 					}
-					this.msg = CatchMindProtocol.GAME_ROOM_CHAT+";" + id + ";" + sendMsg + ";" + flag;
-					
+					this.msg = CatchMindProtocol.GAME_ROOM_CHAT + ";" + id + ";" + sendMsg + ";" + flag;
+
 					// 이제 보내는데 다보내는게 아니고 게임방에 있는 사람들한테만 보내준다.
 					// 유저들중에 해당 게임방 이름이 user.roomName과 똑같은 애들한테만 보내준다.
-					synchronized(userAl){
-						
-						for(int i=0; i<userAl.size(); i++){
-							if(userAl.get(i).roomName.equals(user.roomName)){
+					synchronized (userAl) {
+
+						for (int i = 0; i < userAl.size(); i++) {
+							if (userAl.get(i).roomName.equals(user.roomName)) {
 								PrintWriter pw = userAl.get(i).pw;
 								pw.println(this.msg);
 								pw.flush();
@@ -187,45 +201,47 @@ public class ServerThread extends Thread {
 
 							roomAl.get(i).userAl.add(user);
 							roomAl.get(i).capacity++;
-							
+
 							// 홀수번째 입장은 홀수 팀.
-//							System.out.println(roomAl.get(i).capacity % 2);
+							// System.out.println(roomAl.get(i).capacity % 2);
 							if (roomAl.get(i).capacity % 2 == 0) {
-//								for(int j = 0; j <roomAl.get(i).userAl.size() ; j++){
-//									if(roomAl.get(i).userAl.get(j).team == 1)
-//										roomAl.get(i).team1_count++;
-//									else
-//										roomAl.get(i).team2_count++;
-//								}
-								if(roomAl.get(i).team2_count < 2){
+								// for(int j = 0; j <roomAl.get(i).userAl.size()
+								// ; j++){
+								// if(roomAl.get(i).userAl.get(j).team == 1)
+								// roomAl.get(i).team1_count++;
+								// else
+								// roomAl.get(i).team2_count++;
+								// }
+								if (roomAl.get(i).team2_count < 2) {
 									user.team = 2;
 									roomAl.get(i).team2_count++;
 								}
 								System.out.println("팀 1 인원 수 : " + roomAl.get(i).team1_count);
 								System.out.println("팀 2 인원 수 : " + roomAl.get(i).team2_count);
-								
+
 								for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
 									System.out.println(roomAl.get(i).userAl.get(j).id + "의 팀 :"
 											+ roomAl.get(i).userAl.get(j).team);
 								}
 							}
-							
+
 							// 짝수번째 입장은 짝수 팀.
 							else {
-//								for(int j = 0; j <roomAl.get(i).userAl.size() ; j++){
-//									if(roomAl.get(i).userAl.get(j).team == 1)
-//										roomAl.get(i).team1_count++;
-//									else
-//										roomAl.get(i).team2_count++;
-//								}
+								// for(int j = 0; j <roomAl.get(i).userAl.size()
+								// ; j++){
+								// if(roomAl.get(i).userAl.get(j).team == 1)
+								// roomAl.get(i).team1_count++;
+								// else
+								// roomAl.get(i).team2_count++;
+								// }
 
-								if(roomAl.get(i).team1_count < 2){
+								if (roomAl.get(i).team1_count < 2) {
 									user.team = 1;
 									roomAl.get(i).team1_count++;
 								}
 								System.out.println("팀 1 인원 수 : " + roomAl.get(i).team1_count);
 								System.out.println("팀 2 인원 수 : " + roomAl.get(i).team2_count);
-								
+
 								for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
 									System.out.println(roomAl.get(i).userAl.get(j).id + "의 팀 :"
 											+ roomAl.get(i).userAl.get(j).team);
@@ -234,7 +250,7 @@ public class ServerThread extends Thread {
 
 							tempRoom = roomAl.get(i);
 							// 해당 방에 존재하는 유저 목록들 다 빼온다.
-							String userListmsg = CatchMindProtocol.ADD_USERLIST_IN_GAMEROOM+";";
+							String userListmsg = CatchMindProtocol.ADD_USERLIST_IN_GAMEROOM + ";";
 							for (int j = 0; j < tempRoom.userAl.size(); j++) {
 								UserInfo tempUser = roomAl.get(i).userAl.get(j);
 								if (tempRoom.userAl.size() - 1 == j) {
@@ -260,7 +276,7 @@ public class ServerThread extends Thread {
 					if (!user.roomName.equals(fullroomName)) {
 						System.out.println("꽉 안차서 들어가도됨.");
 						// 다시 보내줘야 해당 아이디에 대한 유저를 룸 리스트에서 빼 줄 수 있다.
-						this.msg = CatchMindProtocol.JOIN_GAME_ROOM+";" + id + ";" + user.roomName + ";";
+						this.msg = CatchMindProtocol.JOIN_GAME_ROOM + ";" + id + ";" + user.roomName + ";";
 
 						synchronized (userAl) {
 							// pw 들 다 가져오고
@@ -273,7 +289,7 @@ public class ServerThread extends Thread {
 					}
 
 					if (fullroomName != null) {
-						this.msg = CatchMindProtocol.IS_FULL_GAMEROOM+";" + id + ";";
+						this.msg = CatchMindProtocol.IS_FULL_GAMEROOM + ";" + id + ";";
 						synchronized (userAl) {
 							for (int i = 0; i < userAl.size(); i++) {
 								// 풀방인 애한테만 메시지 보내줌.
@@ -303,7 +319,8 @@ public class ServerThread extends Thread {
 					String y2 = st.nextToken();
 					String color = st.nextToken();
 
-					this.msg = CatchMindProtocol.DRAW_PAINT+";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2 + ";" +color;
+					this.msg = CatchMindProtocol.DRAW_PAINT + ";" + type + ";" + x1 + ";" + y1 + ";" + x2 + ";" + y2
+							+ ";" + color;
 					// id 가지고 우선 roomName 찾자
 					String tempRoomName = "";
 					for (int i = 0; i < userAl.size(); i++) {
@@ -335,7 +352,7 @@ public class ServerThread extends Thread {
 
 					// user.host = true;
 					user.team = 1;
-					
+					user.host = true;
 					// 방 제목
 					roomName = st.nextToken();
 
@@ -354,7 +371,7 @@ public class ServerThread extends Thread {
 					// }
 					// }
 
-					this.msg = CatchMindProtocol.MAKE_GAME_ROOM+";" + id + ";" + roomName + ";";
+					this.msg = CatchMindProtocol.MAKE_GAME_ROOM + ";" + id + ";" + roomName + ";";
 					System.out.println(msg);
 					synchronized (userAl) {
 						for (int i = 0; i < userAl.size(); i++) {
@@ -370,7 +387,7 @@ public class ServerThread extends Thread {
 					// 게임시작 된거니까 해당 방에 있는 유저들한테 게임 시작 했다고 다 보내줘야됨.
 					String id = st.nextToken();
 					String roomName = st.nextToken();
-					
+
 					// 팀1 팀2 나눠주자. 다음 Token에 있는건 팀1의 이름들이다.
 					String left1 = st.nextToken();
 					String left2 = st.nextToken();
@@ -378,58 +395,61 @@ public class ServerThread extends Thread {
 					String right1 = st.nextToken();
 					String right2 = st.nextToken();
 					String right3 = st.nextToken();
-					for(int i=0; i<userAl.size();i++){
-						if(userAl.get(i).id.equals(left1)){
+					for (int i = 0; i < userAl.size(); i++) {
+						if (userAl.get(i).id.equals(left1)) {
 							userAl.get(i).team = 0;
 							userAl.get(i).turn = 0;
-						}else if(userAl.get(i).id.equals(left2)){
+						} else if (userAl.get(i).id.equals(left2)) {
 							userAl.get(i).team = 0;
 							userAl.get(i).turn = 1;
-						}
-						else if(userAl.get(i).id.equals(left3)){
+						} else if (userAl.get(i).id.equals(left3)) {
 							userAl.get(i).team = 0;
 							userAl.get(i).turn = 2;
 						}
 					}
-					
-					for(int i=0; i<userAl.size();i++){
-						if(userAl.get(i).id.equals(right1)){
+
+					for (int i = 0; i < userAl.size(); i++) {
+						if (userAl.get(i).id.equals(right1)) {
 							userAl.get(i).team = 1;
 							userAl.get(i).turn = 0;
-						}else if(userAl.get(i).id.equals(right2)){
+						} else if (userAl.get(i).id.equals(right2)) {
 							userAl.get(i).team = 1;
 							userAl.get(i).turn = 1;
-//						}
-						}else if(userAl.get(i).id.equals(right3)){
+							// }
+						} else if (userAl.get(i).id.equals(right3)) {
 							userAl.get(i).team = 1;
 							userAl.get(i).turn = 2;
 						}
 					}
-					for(int i=0; i<roomAl.size();i++){
-						if(roomAl.get(i).roomName.equals(roomName)){
-							for(int j=0; j<roomAl.get(i).userAl.size(); j++){
-								System.out.println("id : " + roomAl.get(i).userAl.get(j).id +", "+ "turn : "+roomAl.get(i).userAl.get(j).turn);
+					for (int i = 0; i < roomAl.size(); i++) {
+						if (roomAl.get(i).roomName.equals(roomName)) {
+							for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
+								System.out.println("id : " + roomAl.get(i).userAl.get(j).id + ", " + "turn : "
+										+ roomAl.get(i).userAl.get(j).turn);
 							}
 						}
 					}
-					
-					String left = ";" + left1 + ";" + left2 + ";" + left3 ;
+
+					String left = ";" + left1 + ";" + left2 + ";" + left3;
 					String right = ";" + right1 + ";" + right2 + ";" + right3;
-					
+
 					// 해당 방에 있는 유저들의 gameOn을 다 true로 바꿔주고
 					// 해당 방에 있는 유저들한테만 게임 시작됬다고 메세지를 보낸다. 그럼 이제 그림판 그릴 수 있게
 					// 해줘야함.
 					Question question = new Question();
 					String answer = question.setQuestion();
 					// 유저가 속해있는 방에 answer 바꿔주자.
-					for(int i=0; i<roomAl.size(); i++){
-						if(roomAl.get(i).roomName.equals(roomName)){
+					for (int i = 0; i < roomAl.size(); i++) {
+						if (roomAl.get(i).roomName.equals(roomName)) {
 							roomAl.get(i).answer = answer;
 							System.out.println("해당방의 answer" + roomAl.get(i).answer);
 						}
 					}
+					for (int i = 0; i < roomAl.size(); i++) {
+
+					}
+					this.msg = CatchMindProtocol.GAME_START + ";" + id + ";" + roomName + ";" + answer +";"+ left + right;
 					
-					this.msg = CatchMindProtocol.GAME_START+";" + id + ";" + roomName + ";" + answer + left + right;;
 					System.out.println(msg);
 					synchronized (userAl) {
 						for (int i = 0; i < userAl.size(); i++) {
@@ -444,12 +464,36 @@ public class ServerThread extends Thread {
 
 					sw = new StopWatch(userAl, roomAl, roomName);
 					sw.start();
-					
+					user.sw = sw;
 
 					// 출제자 팀이고, 출제 차례이면 setText
 					// item 쓴경우
-//					Thread.sleep(2000);
-//					sw.time = sw.time + 50;
+					// Thread.sleep(2000);
+					// sw.time = sw.time + 50;
+					break;
+				}
+				case CatchMindProtocol.ITEM_1: {
+					String roomName = st.nextToken();
+					synchronized (roomAl) {
+						for (int i = 0; i < roomAl.size(); i++) {
+							if (roomAl.get(i).roomName.equals(roomName)) {
+								String msg = CatchMindProtocol.ITEM_1 + ";" + roomName + ";";
+								synchronized (userAl) {
+									for (int j = 0; j < userAl.size(); j++) {
+										if (userAl.get(i).turn == 0) {
+											PrintWriter pw = userAl.get(i).pw;
+											pw.println(msg);
+											pw.flush();
+											sw.time = sw.time + 15;
+										}
+									}
+
+								}
+
+							}
+						}
+					}
+
 					break;
 				}
 				case CatchMindProtocol.EXIT_WATTING_ROM: {
@@ -457,7 +501,7 @@ public class ServerThread extends Thread {
 					String id = st.nextToken();
 					user.gameOn = false;
 					// 얘 나갔다는거 전부한테 알려주자.
-					this.msg = CatchMindProtocol.EXIT_WATTING_ROM+";" + id + ";";
+					this.msg = CatchMindProtocol.EXIT_WATTING_ROM + ";" + id + ";";
 					// 해당 아이디에 해당하는놈 user 지워주자
 					int index = 0;
 					for (int i = 0; i < userAl.size(); i++) {
@@ -479,7 +523,7 @@ public class ServerThread extends Thread {
 				// GameRoom 에서 close 눌렀을때
 				case CatchMindProtocol.EXIT_GAME_ROOM: {
 					String id = st.nextToken();
-					this.msg = CatchMindProtocol.EXIT_GAME_ROOM+";" + id + ";";
+					this.msg = CatchMindProtocol.EXIT_GAME_ROOM + ";" + id + ";";
 					// 모든 애들한테 지금 얘 대기방으로 다시 왔다고 알려줘야지!
 					// 문제는 여기서 이것만 알려줄게 아니고 방이 없어졌다면 없어진 방도 알려줘야함.
 					synchronized (userAl) {
@@ -510,21 +554,23 @@ public class ServerThread extends Thread {
 
 								user.roomName = "";
 								for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
-									System.out.println(roomAl.get(i).userAl.get(j).id + "의 팀 : " + roomAl.get(i).userAl.get(j).team);
+									System.out.println(roomAl.get(i).userAl.get(j).id + "의 팀 : "
+											+ roomAl.get(i).userAl.get(j).team);
 									if (user.id.equals(roomAl.get(i).userAl.get(j).id)) {
-										if(roomAl.get(i).userAl.get(j).team == 1){
+										if (roomAl.get(i).userAl.get(j).team == 1) {
 											roomAl.get(i).team1_count--;
-										}else{
+										} else {
 											roomAl.get(i).team2_count--;
 										}
 										roomAl.get(i).userAl.remove(j);
 									}
 									// 팀 바꿔주는 부분인데 굳이 안바꿔줘도 됨.
-//									if(roomAl.get(i).userAl.get(j).team == 1){
-//										roomAl.get(i).userAl.get(j).team = 2;
-//									}else{
-//										roomAl.get(i).userAl.get(j).team = 1;
-//									}
+									// if(roomAl.get(i).userAl.get(j).team ==
+									// 1){
+									// roomAl.get(i).userAl.get(j).team = 2;
+									// }else{
+									// roomAl.get(i).userAl.get(j).team = 1;
+									// }
 								}
 
 								roomAl.get(i).capacity = roomAl.get(i).capacity - 1;
@@ -534,7 +580,7 @@ public class ServerThread extends Thread {
 								if (roomAl.get(i).capacity >= 1) {
 									// 방에 처음 있는 애를 새로운 방장으로 한다.
 									String newhost = roomAl.get(i).userAl.get(0).id;
-									this.msg = CatchMindProtocol.HEAD_GIVE+";" + newhost + ";";
+									this.msg = CatchMindProtocol.HEAD_GIVE + ";" + newhost + ";";
 									synchronized (userAl) {
 										for (int k = 0; k < userAl.size(); k++) {
 											PrintWriter pw = userAl.get(k).pw;
@@ -545,8 +591,9 @@ public class ServerThread extends Thread {
 									roomAl.get(i).userAl.get(0).host = true;
 									System.out.println(roomAl.get(i).userAl.get(0).host);
 								}
-								for(int j = 0; j<roomAl.get(i).userAl.size();j++){
-									System.out.println(roomAl.get(i).userAl.get(j).id + "의 팀은" + roomAl.get(i).userAl.get(j).team);
+								for (int j = 0; j < roomAl.get(i).userAl.size(); j++) {
+									System.out.println(
+											roomAl.get(i).userAl.get(j).id + "의 팀은" + roomAl.get(i).userAl.get(j).team);
 								}
 							}
 						}
@@ -555,7 +602,7 @@ public class ServerThread extends Thread {
 					if (delete == true) {
 						// 지워진 방의 이름을 기억해두고 그 방의 String을 보내주자.
 						// 누구한테? 클라이언트 모두에게!
-						this.msg = CatchMindProtocol.REMOVE_GAME_ROOM+";" + temp + ";";
+						this.msg = CatchMindProtocol.REMOVE_GAME_ROOM + ";" + temp + ";";
 						synchronized (userAl) {
 							for (int i = 0; i < userAl.size(); i++) {
 								PrintWriter pw = userAl.get(i).pw;
@@ -568,35 +615,35 @@ public class ServerThread extends Thread {
 
 					break;
 				}
-				case 1500:
-				{String id = st.nextToken();
-				String side = st.nextToken();
-				
-				// 그리고 이 유저의 팀을 정해준다.
-				// 왼쪽이면 0, 오른쪽이면 1
-				for(int i=0; i<userAl.size(); i++){
-					if(userAl.get(i).id.equals(id)){
-						if(side.equals("left")){
-							userAl.get(i).team = 0;
-						}
-						if(side.equals("right")){
-							userAl.get(i).team = 1;
-						}
-					}
-				}
-				
-				this.msg = "1500" + ";" + id + ";" + side;
-				
-				// 그 방에있는 애들한테만 다 보내준다.
-				synchronized(userAl){
-					for(int i=0; i<userAl.size(); i++){
-						if(userAl.get(i).roomName.equals(roomName)){
-							PrintWriter pw = userAl.get(i).pw;
-							pw.println(this.msg);
-							pw.flush();
+				case CatchMindProtocol.DICISION_TEAM: {
+					String id = st.nextToken();
+					String side = st.nextToken();
+
+					// 그리고 이 유저의 팀을 정해준다.
+					// 왼쪽이면 0, 오른쪽이면 1
+					for (int i = 0; i < userAl.size(); i++) {
+						if (userAl.get(i).id.equals(id)) {
+							if (side.equals("left")) {
+								userAl.get(i).team = 0;
+							}
+							if (side.equals("right")) {
+								userAl.get(i).team = 1;
+							}
 						}
 					}
-				}
+
+					this.msg = CatchMindProtocol.DICISION_TEAM + ";" + id + ";" + side;
+
+					// 그 방에있는 애들한테만 다 보내준다.
+					synchronized (userAl) {
+						for (int i = 0; i < userAl.size(); i++) {
+							if (userAl.get(i).roomName.equals(roomName)) {
+								PrintWriter pw = userAl.get(i).pw;
+								pw.println(this.msg);
+								pw.flush();
+							}
+						}
+					}
 					break;
 				}
 				}

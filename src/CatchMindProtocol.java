@@ -38,7 +38,8 @@ public class CatchMindProtocol implements Serializable{
 	//게임 방 지우기
 	public static final int REMOVE_GAME_ROOM =1010;
 	
+	public static final int DICISION_TEAM=1500;
 	
-	
+	public static final int ITEM_1=111;
 	
 }

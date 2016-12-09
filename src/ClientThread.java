@@ -56,7 +56,7 @@ public class ClientThread extends Thread {
 				lv.room.gameRoom.area.setAutoscrolls(true);
 				// 만약에 정답이면
 				if (flag.equals("1")) {
-					JOptionPane.showMessageDialog(null, "문제를 맞췄습니다.");
+					JOptionPane.showMessageDialog(null, senderId + "님이 문제를 맞췄습니다.");
 					user.gameOn = false;
 				}
 				break;
@@ -119,7 +119,7 @@ public class ClientThread extends Thread {
 					user.roomName = roomName;
 				}
 				lv.room.userList.remove(id);
-//				lv.room.setVisible(false);
+				// lv.room.setVisible(false);
 				//
 				/*
 				 * if(id.equals(this.user.id))
@@ -155,7 +155,7 @@ public class ClientThread extends Thread {
 					lv.room.gameRoom.g.setColor(Color.black);
 				} else if (color_info == 7) {
 					lv.room.gameRoom.g.setColor(Color.white);
-				} 
+				}
 
 				int w = x2 - x1;
 				int h = y2 - y1;
@@ -163,21 +163,21 @@ public class ClientThread extends Thread {
 				lv.room.gameRoom.gg.setPaintMode();
 
 				switch (type) {
-					case 0:
-						lv.room.gameRoom.g.drawLine(x1, y1, x2, y2);
-						break;
-					case 1:
-						lv.room.gameRoom.g.drawOval(x1, y1, w, h);
-						break;
-					case 2:
-						lv.room.gameRoom.g.drawRect(x1, y1, w, h);
-						break;
-					case 3:
-						lv.room.gameRoom.g.drawLine(x1, y1, x2, y2);
-						break;
-					case 4:
-						lv.room.gameRoom.canvas.repaint();
-						break;
+				case 0:
+					lv.room.gameRoom.g.drawLine(x1, y1, x2, y2);
+					break;
+				case 1:
+					lv.room.gameRoom.g.drawOval(x1, y1, w, h);
+					break;
+				case 2:
+					lv.room.gameRoom.g.drawRect(x1, y1, w, h);
+					break;
+				case 3:
+					lv.room.gameRoom.g.drawLine(x1, y1, x2, y2);
+					break;
+				case 4:
+					lv.room.gameRoom.canvas.repaint();
+					break;
 				}
 				break;
 			}
@@ -197,7 +197,7 @@ public class ClientThread extends Thread {
 					// 방장이 들어간거니까 방리스트에 추가.
 					lv.room.gameRoom.userListField.add(id);
 				}
-//				lv.room.setVisible(false);
+				// lv.room.setVisible(false);
 				break;
 			}
 			case CatchMindProtocol.GAME_START: // 게임시작하기.500
@@ -229,13 +229,27 @@ public class ClientThread extends Thread {
 				if (user.roomName.equals(roomName)) {
 					user.gameOn = true;
 				}
+				if (user.turn != 0) {
+					System.out.println("정답이 떠야대");
+					lv.room.gameRoom.text_problem.setText(answer);
+				}
+				if (user.roomName.equals(roomName)) {
+					user.gameOn = true;
+				}
 
 				break;
 			}
 			case CatchMindProtocol.GAME_STOPWATCH: // 스톱워치 시작.700
 			{
+				
 				String time = st.nextToken();
 				int myTurn = Integer.parseInt(st.nextToken());
+				String answer = st.nextToken();
+
+				if (myTurn != 0) {
+					System.out.println("정답이 떠야대");
+					lv.room.gameRoom.text_problem.setText(answer);
+				}
 
 				int count = Integer.parseInt(time);
 
@@ -281,22 +295,23 @@ public class ClientThread extends Thread {
 					}
 				} else if ((Integer.parseInt(time) % 30 == 0) // BY GIL
 						&& (Integer.parseInt(time) / 30 == 0)) { // 0초
-					
+
 					if (myTurn == 0) {
 						user.block = true;
 					} else if (myTurn == 1) {
 						user.block = true;
 					} else if (myTurn == 2) {
+						JOptionPane.showMessageDialog(null, "시간이 모두 경과했습니다. 이제는 그릴 수 없습니다.");
 						user.block = true;
 					}
-					
+
 					user.gameOn = false;
-					lv.room.gameRoom.canvas.repaint();
-					JOptionPane.showMessageDialog(null, "게임이  종료되었습니다.");
+
 				}
 
 				break;
 			}
+
 			// 방장 위임하는 부분.
 			case CatchMindProtocol.HEAD_GIVE: // 방장 위임 777
 			{
@@ -330,6 +345,24 @@ public class ClientThread extends Thread {
 					lv.room.setVisible(true);
 				break;
 			}
+			case CatchMindProtocol.ITEM_1: {
+				String roomName = st.nextToken();
+				if (user.roomName.equals(roomName)) {
+					if (user.turn != 0) {
+						JOptionPane.showMessageDialog(null, "사용할 수 없습니다.");
+					}
+				}
+
+				break;
+			}
+//			case CatchMindProtocol.ITEM_2: {
+//				String answer = st.nextToken();
+//				String hint = st.nextToken();
+//				if (user.turn == 0) {
+//					lv.room.gameRoom.text_hint.setText(hint);
+//				}
+//				break;
+//			}
 			// 방 지워주는 역할.
 			case CatchMindProtocol.REMOVE_GAME_ROOM:// 게임바
 			{
@@ -337,6 +370,7 @@ public class ClientThread extends Thread {
 				lv.room.roomList.remove(roomName);
 				break;
 			}
+			// 팀 나누기
 			case 1500: {
 				String id = st.nextToken();
 				String side = st.nextToken();

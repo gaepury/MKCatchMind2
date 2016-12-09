@@ -40,7 +40,7 @@ public class Question {
 	}
 	
 	public String setQuestion() {
-		int stage = (int)(Math.random()*30+1);
+		int stage = (int)(Math.random()*30);
 		String question = answer[stage];
 		return question;
 	}
